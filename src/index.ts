@@ -54,7 +54,7 @@ export class AbortError extends Error {
   type: string
   code: string
 
-  constructor (message?: string, code?: string) {
+  constructor(message?: string, code?: string) {
     super(message ?? 'The operation was aborted')
     this.type = 'aborted'
     this.code = code ?? 'ABORT_ERR'
@@ -100,12 +100,12 @@ interface BasePushable<T> {
 /**
  * An iterable that you can push values into.
  */
-export interface Pushable<T, R = void, N = unknown> extends AsyncGenerator<T, R, N>, BasePushable<T> {}
+export interface Pushable<T, R = void, N = unknown> extends AsyncGenerator<T, R, N>, BasePushable<T> { }
 
 /**
  * Similar to `pushable`, except it yields multiple buffered chunks at a time. All values yielded from the iterable will be arrays.
  */
-export interface PushableV<T, R = void, N = unknown> extends AsyncGenerator<T[], R, N>, BasePushable<T> {}
+export interface PushableV<T, R = void, N = unknown> extends AsyncGenerator<T[], R, N>, BasePushable<T> { }
 
 export interface Options {
   /**
@@ -140,9 +140,9 @@ export interface BytePushableOptions extends Options {
  * or when used in a `for await of`loop are "pushed" into the iterable.
  * Returns an async iterable object with additional methods.
  */
-export function pushable<T extends { byteLength: number } = Uint8Array> (options?: BytePushableOptions): Pushable<T>
-export function pushable<T> (options: ObjectPushableOptions): Pushable<T>
-export function pushable<T> (options: Options = {}): Pushable<T> {
+export function pushable<T extends { byteLength: number } = Uint8Array>(options?: BytePushableOptions): Pushable<T>
+export function pushable<T>(options: ObjectPushableOptions): Pushable<T>
+export function pushable<T>(options: Options = {}): Pushable<T> {
   const getNext = (buffer: FIFO<T>): NextResult<T> => {
     const next: Next<T> | undefined = buffer.shift()
 
@@ -164,9 +164,9 @@ export function pushable<T> (options: Options = {}): Pushable<T> {
   return _pushable<T, T, Pushable<T>>(getNext, options)
 }
 
-export function pushableV<T extends { byteLength: number } = Uint8Array> (options?: BytePushableOptions): PushableV<T>
-export function pushableV<T> (options: ObjectPushableOptions): PushableV<T>
-export function pushableV<T> (options: Options = {}): PushableV<T> {
+export function pushableV<T extends { byteLength: number } = Uint8Array>(options?: BytePushableOptions): PushableV<T>
+export function pushableV<T>(options: ObjectPushableOptions): PushableV<T>
+export function pushableV<T>(options: Options = {}): PushableV<T> {
   const getNext = (buffer: FIFO<T>): NextResult<T[]> => {
     let next: Next<T> | undefined
     const values: T[] = []
@@ -201,7 +201,7 @@ export function pushableV<T> (options: Options = {}): PushableV<T> {
   return _pushable<T, T[], PushableV<T>>(getNext, options)
 }
 
-function _pushable<PushType, ValueType, ReturnType> (getNext: getNext<PushType, ValueType>, options?: Options): ReturnType {
+function _pushable<PushType, ValueType, ReturnType>(getNext: getNext<PushType, ValueType>, options?: Options): ReturnType {
   options = options ?? {}
   let onEnd = options.onEnd
   let buffer = new FIFO<PushType>()
@@ -297,13 +297,13 @@ function _pushable<PushType, ValueType, ReturnType> (getNext: getNext<PushType, 
   }
 
   pushable = {
-    [Symbol.asyncIterator] () { return this },
+    [Symbol.asyncIterator]() { return this },
     next: waitNext,
     return: _return,
     throw: _throw,
     push,
     end,
-    get readableLength (): number {
+    get readableLength(): number {
       return buffer.size
     },
     onEmpty: async (options?: AbortOptions) => {
@@ -347,11 +347,11 @@ function _pushable<PushType, ValueType, ReturnType> (getNext: getNext<PushType, 
   const _pushable = pushable
 
   pushable = {
-    [Symbol.asyncIterator] () { return this },
-    next () {
+    [Symbol.asyncIterator]() { return this },
+    next() {
       return _pushable.next()
     },
-    throw (err: Error) {
+    throw(err: Error) {
       _pushable.throw(err)
 
       if (onEnd != null) {
@@ -361,7 +361,7 @@ function _pushable<PushType, ValueType, ReturnType> (getNext: getNext<PushType, 
 
       return { done: true }
     },
-    return () {
+    return() {
       _pushable.return()
 
       if (onEnd != null) {
@@ -372,7 +372,7 @@ function _pushable<PushType, ValueType, ReturnType> (getNext: getNext<PushType, 
       return { done: true }
     },
     push,
-    end (err: Error) {
+    end(err: Error) {
       _pushable.end(err)
 
       if (onEnd != null) {
@@ -382,7 +382,7 @@ function _pushable<PushType, ValueType, ReturnType> (getNext: getNext<PushType, 
 
       return pushable
     },
-    get readableLength () {
+    get readableLength() {
       return _pushable.readableLength
     },
     onEmpty: (opts?: AbortOptions) => {

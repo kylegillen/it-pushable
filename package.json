@@ -19,19 +19,10 @@
     "pushable"
   ],
   "type": "module",
-  "types": "./dist/src/index.d.ts",
   "files": [
-    "src",
-    "dist",
-    "!dist/test",
-    "!**/*.tsbuildinfo"
+    "dist"
   ],
-  "exports": {
-    ".": {
-      "types": "./dist/src/index.d.ts",
-      "import": "./dist/src/index.js"
-    }
-  },
+  "main": "dist/index.js",
   "eslintConfig": {
     "extends": "ipfs",
     "parserOptions": {
@@ -125,28 +116,19 @@
     ]
   },
   "scripts": {
-    "clean": "aegir clean",
-    "lint": "aegir lint",
-    "dep-check": "aegir dep-check",
-    "build": "aegir build",
-    "test": "aegir test -f ./dist/test",
-    "test:chrome": "aegir test -t browser --cov",
-    "test:chrome-webworker": "aegir test -t webworker",
-    "test:firefox": "aegir test -t browser -- --browser firefox",
-    "test:firefox-webworker": "aegir test -t webworker -- --browser firefox",
-    "test:node": "aegir test -t node --cov",
-    "test:electron-main": "aegir test -t electron-main",
-    "release": "aegir release",
-    "docs": "aegir docs"
+    "build": "tsc",
+    "check-exports": "attw --pack . --ignore-rules=cjs-resolves-to-esm"
   },
   "dependencies": {
     "p-defer": "^4.0.0"
   },
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.17.4",
     "@types/fast-fifo": "^1.0.0",
-    "aegir": "^41.0.5",
+    "@types/node": "^22.13.10",
     "it-all": "^3.0.1",
     "it-pipe": "^3.0.1",
+    "typescript": "^5.8.2",
     "uint8arraylist": "^2.0.0"
   }
 }
